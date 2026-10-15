@@ -297,7 +297,8 @@ class CatalogProductDataFactory
         $parent = $product->Parent();
         if ($parent instanceof ProductCategory && $parent->exists()) {
             $category = $parent;
-        } else {
+        } elseif ($product->getCategoryIDs() !== []) {
+            // Guarded: getCategories() does byIDs($ids), and in SS6 byIDs([]) throws "filter against an empty set".
             $first = $product->getCategories()->first();
             if ($first instanceof ProductCategory) {
                 $category = $first;

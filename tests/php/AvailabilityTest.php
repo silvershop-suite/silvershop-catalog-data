@@ -22,7 +22,7 @@ class AvailabilityTest extends SapphireTest
 
     protected static bool $use_draft_site = true;
 
-    protected static array $required_extensions = [
+    protected static $required_extensions = [
         Product::class => [StockAvailabilityStub::class],
     ];
 

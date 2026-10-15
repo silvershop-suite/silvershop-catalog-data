@@ -95,12 +95,20 @@ class FeedIdTest extends SapphireTest
         $this->assertNull($this->factory->forProduct($product)->itemGroupId());
     }
 
-    public function testFeedIdIsCappedAtFiftyChars(): void
+    public function testFeedIdIsCappedToConfiguredMax(): void
     {
-        $product = $this->newProduct(['InternalItemID' => str_repeat('A', 80)]);
+        // InternalItemID is Varchar(30), so the cap is exercised with a lowered id_max_length; the default is 50.
+        Config::modify()->set(CatalogProductDataFactory::class, 'id_max_length', 5);
+        $product = $this->newProduct(['InternalItemID' => 'RJ-001234']);
+
         $id = $this->factory->feedId($product);
-        $this->assertSame(50, strlen($id));
-        $this->assertSame(str_repeat('A', 50), $id);
+        $this->assertSame(5, strlen($id));
+        $this->assertSame('RJ-00', $id);
+    }
+
+    public function testDefaultIdMaxLengthIsFifty(): void
+    {
+        $this->assertSame(50, (int) CatalogProductDataFactory::config()->get('id_max_length'));
     }
 
     public function testFeedIdIsStable(): void

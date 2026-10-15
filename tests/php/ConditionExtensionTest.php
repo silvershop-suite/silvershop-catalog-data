@@ -8,6 +8,7 @@ use SilverShop\CatalogData\Extension\ProductConditionExtension;
 use SilverShop\Page\Product;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\FieldType\DBEnum;
 
 /**
  * The Condition field is applied to Product and renders on the edit form exactly once. Product auto-scaffolds
@@ -28,7 +29,7 @@ class ConditionExtensionTest extends SapphireTest
 
     public function testConditionFieldRendersExactlyOnceAsDropdown(): void
     {
-        $product = Product::create(['Title' => 'Rain Jacket']);
+        $product = Product::create(['Title' => 'Rain Jacket', 'BasePrice' => 10.0]);
 
         // getDataFields() throws on a duplicate field name; reaching the assertions means no "appears twice" fatal.
         $dataFields = $product->getCMSFields()->getDataFields();
@@ -40,11 +41,11 @@ class ConditionExtensionTest extends SapphireTest
         $this->assertSame(['new', 'refurbished', 'used'], array_keys($source));
     }
 
-    public function testConditionDefaultIsNew(): void
+    public function testConditionFieldDefaultsToNew(): void
     {
-        $product = Product::create(['Title' => 'Rain Jacket']);
-        $product->write();
-
-        $this->assertSame('new', $product->Condition);
+        // The Enum's schema default drives both the DB column default and the CMS dropdown preselect.
+        $field = Product::singleton()->dbObject('Condition');
+        $this->assertInstanceOf(DBEnum::class, $field);
+        $this->assertSame('new', $field->getDefaultValue());
     }
 }

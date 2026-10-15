@@ -27,7 +27,7 @@ class CatalogProductDataFactoryTest extends SapphireTest
 
     protected static bool $use_draft_site = true;
 
-    protected static array $required_extensions = [
+    protected static $required_extensions = [
         Product::class => [SellingPriceDiscountStub::class],
     ];
 
@@ -92,7 +92,10 @@ class CatalogProductDataFactoryTest extends SapphireTest
 
     public function testDescriptionPrefersMetaDescription(): void
     {
-        $product = $this->newProduct(['MetaDescription' => 'A waterproof rain jacket.', 'Content' => '<p>Ignored.</p>']);
+        $product = $this->newProduct([
+            'MetaDescription' => 'A waterproof rain jacket.',
+            'Content' => '<p>Ignored.</p>',
+        ]);
         $this->assertSame('A waterproof rain jacket.', $this->factory->forProduct($product)->description());
     }
 
