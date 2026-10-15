@@ -1,0 +1,8 @@
+it:
+  SilverShop\CatalogData\Condition:
+    New: 'Nuovo'
+    Refurbished: 'Ricondizionato'
+    Used: 'Usato'
+  SilverShop\CatalogData\Extension\ProductConditionExtension:
+    ConditionLabel: 'Condizione'
+    ConditionDesc: 'Condizione dell''articolo comunicata ai canali di vendita e ai risultati avanzati. La maggior parte degli articoli del catalogo è nuova.'

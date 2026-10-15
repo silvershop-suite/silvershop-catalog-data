@@ -1,0 +1,8 @@
+en:
+  SilverShop\CatalogData\Condition:
+    New: 'New'
+    Refurbished: 'Refurbished'
+    Used: 'Used'
+  SilverShop\CatalogData\Extension\ProductConditionExtension:
+    ConditionLabel: 'Condition'
+    ConditionDesc: 'Item condition reported to shopping channels and rich results. Most catalogue items are new.'

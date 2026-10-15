@@ -1,0 +1,8 @@
+nl:
+  SilverShop\CatalogData\Condition:
+    New: 'Nieuw'
+    Refurbished: 'Refurbished'
+    Used: 'Gebruikt'
+  SilverShop\CatalogData\Extension\ProductConditionExtension:
+    ConditionLabel: 'Staat'
+    ConditionDesc: 'Productstaat die wordt doorgegeven aan verkoopkanalen en rich results. De meeste catalogusartikelen zijn nieuw.'

@@ -1,0 +1,8 @@
+de:
+  SilverShop\CatalogData\Condition:
+    New: 'Neu'
+    Refurbished: 'Generalüberholt'
+    Used: 'Gebraucht'
+  SilverShop\CatalogData\Extension\ProductConditionExtension:
+    ConditionLabel: 'Zustand'
+    ConditionDesc: 'Artikelzustand, der an Shopping-Kanäle und Rich Results übermittelt wird. Die meisten Katalogartikel sind neu.'

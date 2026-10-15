@@ -1,0 +1,8 @@
+---
+Name: silvershop-catalog-data
+After:
+  - silvershop-extensions
+---
+SilverShop\Page\Product:
+  extensions:
+    - SilverShop\CatalogData\Extension\ProductConditionExtension
