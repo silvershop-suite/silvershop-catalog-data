@@ -11,9 +11,9 @@ availability and identity from the catalogue, they all read the same VO:
 
 | Consumer | Uses |
 |---|---|
-| `silvershop/product-feed-google` (and other feed channels) | maps the VO to `g:` RSS attributes; `feedId()` → `g:id` |
-| `silvershop/seo` | formats the VO as schema.org Product JSON-LD |
-| `silvershop/conversion-tracking` | `feedId()` → `content_ids`; `price()`/`currency()` → event value |
+| `silvershop-suite/product-feed-google` (and other feed channels) | maps the VO to `g:` RSS attributes; `feedId()` → `g:id` |
+| `silvershop-suite/seo` | formats the VO as schema.org Product JSON-LD |
+| `silvershop-suite/conversion-tracking` | `feedId()` → `content_ids`; `price()`/`currency()` → event value |
 
 Because the feed's `g:id` and the ad platforms' `content_ids` **both** come from `feedId()`, catalogue feeds and
 conversion events agree on product identity **by construction** — no mapping table, no drift.
@@ -29,7 +29,7 @@ That is the complete hard dependency set. Everything richer is a guarded soft de
 ## Installation
 
 ```bash
-composer require silvershop/catalog-data
+composer require silvershop-suite/catalog-data
 ```
 
 Then run `dev/build?flush=all` (adds the `Condition` field to `Product`).
@@ -49,7 +49,7 @@ $data->formattedPrice();    // "89.95 EUR"         (raw numeric + ISO-4217, chan
 $data->formattedSalePrice();// "69.95 EUR" or null (only when a reduction is active)
 $data->availability();      // Availability::InStock | OutOfStock | …
 $data->imageLink();         // absolute URL of the primary image
-$data->gtin();              // from silvershop/product-identity, or null
+$data->gtin();              // from silvershop-suite/product-identity, or null
 $data->condition();         // Condition::New_ | Refurbished | Used
 $data->productType();       // "Clothing > Jackets"
 $data->attributes();        // ['Color' => 'Red', 'Size' => 'L']  (variations)
@@ -98,8 +98,8 @@ SilverShop\CatalogData\CatalogProductDataFactory:
 | `imageLink()` / `additionalImageLinks()` | variation image → `getAllImages` (gallery) → `Image()` | **gallery guarded** |
 | `availability()` | `hasAvailableStock()` (stock), else `canPurchase()` | **stock guarded** |
 | `price()` / `salePrice()` / `currency()` | `BasePrice`/`Price` + `sellingPrice()` + site currency | no (core) |
-| `brand()` | `silvershop/brands` `Brand` | **guarded** |
-| `gtin()` / `mpn()` | `silvershop/product-identity` resolved accessors | **guarded** |
+| `brand()` | `silvershop-suite/brands` `Brand` | **guarded** |
+| `gtin()` / `mpn()` | `silvershop-suite/product-identity` resolved accessors | **guarded** |
 | `identifierExists()` | `false` only when no gtin + no mpn + no brand, else null | — |
 | `condition()` | the `Condition` field this module adds (variation inherits product) | no (owned here) |
 | `productType()` | primary category `NestedTitle()` path | no (core) |
@@ -114,16 +114,16 @@ SilverShop\CatalogData\CatalogProductDataFactory:
 Each is read through `class_exists`/`hasMethod` guards, so the mapper works with or without it; absent values are
 simply omitted:
 
-- **`silvershop/product-identity`** — `gtin()` / `mpn()` (via its variant→product resolved accessors);
-- **`silvershop/brands`** — `brand()`;
-- **`silvershop/product-gallery`** — extra images in `additionalImageLinks()`;
-- **`silvershop/colors`** — colour variant attributes surface through `attributes()`.
+- **`silvershop-suite/product-identity`** — `gtin()` / `mpn()` (via its variant→product resolved accessors);
+- **`silvershop-suite/brands`** — `brand()`;
+- **`silvershop-suite/product-gallery`** — extra images in `additionalImageLinks()`;
+- **`silvershop-suite/colors`** — colour variant attributes surface through `attributes()`.
 
 ## The `Condition` field
 
 This module adds a `Condition` enum (`new` / `refurbished` / `used`, default `new`) to `Product`, editable on the
 Content tab. It is a catalogue/marketing attribute shared by the feed (`g:condition`), SEO JSON-LD (`itemCondition`)
-and tracking, so it lives here beside the mapper rather than in the barcode-focused `silvershop/product-identity`.
+and tracking, so it lives here beside the mapper rather than in the barcode-focused `silvershop-suite/product-identity`.
 Variations inherit their product's condition. Change the fallback with:
 
 ```yaml

@@ -1,5 +1,5 @@
 {
-    "name": "silvershop/catalog-data",
+    "name": "silvershop-suite/catalog-data",
     "description": "Shared normalised product-data mapper for SilverShop (CMS 6): a CatalogProductData value object + factory that turns a Product/Variation into channel-ready fields (feedId, price/sale, currency, stock-driven availability, images, brand, GTIN/MPN, condition, category path). The one source of truth consumed by the product-feed, SEO and conversion-tracking modules.",
     "type": "silverstripe-vendormodule",
     "keywords": ["silverstripe", "silvershop", "ecommerce", "catalog", "product-feed", "merchant", "mapper", "feedid"],
@@ -27,10 +27,10 @@
         "squizlabs/php_codesniffer": "^3.0"
     },
     "suggest": {
-        "silvershop/product-identity": "Adds GTIN/MPN master data; read guarded for the catalog gtin()/mpn() fields.",
-        "silvershop/brands": "Adds the product Brand; read guarded for the catalog brand() field.",
-        "silvershop/product-gallery": "Adds a product image gallery; read guarded for additional images.",
-        "silvershop/colors": "Adds colour variant attributes surfaced through the catalog attributes() map."
+        "silvershop-suite/product-identity": "Adds GTIN/MPN master data; read guarded for the catalog gtin()/mpn() fields.",
+        "silvershop-suite/brands": "Adds the product Brand; read guarded for the catalog brand() field.",
+        "silvershop-suite/product-gallery": "Adds a product image gallery; read guarded for additional images.",
+        "silvershop-suite/colors": "Adds colour variant attributes surfaced through the catalog attributes() map."
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
