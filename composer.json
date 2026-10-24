@@ -1,7 +1,8 @@
 {
     "name": "silvershop-suite/catalog-data",
-    "description": "Shared normalised product-data mapper for SilverShop (CMS 6): a CatalogProductData value object + factory that turns a Product/Variation into channel-ready fields (feedId, price/sale, currency, stock-driven availability, images, brand, GTIN/MPN, condition, category path). The one source of truth consumed by the product-feed, SEO and conversion-tracking modules.",
+    "description": "Shared normalised product-data mapper for SilverShop (CMS 6): a CatalogProductData value object + factory that turns a Product/Variation into channel-ready fields (feedId, price/sale, currency, stock-driven availability, images, brand, GTIN/MPN, condition, category path, stock quantity, shipping weight/dimensions, secondary categories, last-modified). The one source of truth consumed by the product-feed, SEO and conversion-tracking modules.",
     "type": "silverstripe-vendormodule",
+    "version": "1.1.0",
     "keywords": ["silverstripe", "silvershop", "ecommerce", "catalog", "product-feed", "merchant", "mapper", "feedid"],
     "license": "BSD-3-Clause",
     "authors": [

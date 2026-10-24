@@ -104,6 +104,10 @@ SilverShop\CatalogData\CatalogProductDataFactory:
 | `condition()` | the `Condition` field this module adds (variation inherits product) | no (owned here) |
 | `productType()` | primary category `NestedTitle()` path | no (core) |
 | `attributes()` | variation `AttributeValues` (type label => value) | no (core) |
+| `quantity()` | `silvershop/stock` `getStockLevel()` (finite level; unlimited/untracked → null) | **stock guarded** |
+| `weight()` / `height()` / `width()` / `depth()` | core `Weight`/`Height`/`Width`/`Depth` (variation inherits product when unset) | no (core) |
+| `secondaryCategories()` | the product's explicit `ProductCategories` placements beyond the primary path | no (core) |
+| `lastModified()` | `LastEdited` (variation: later of its own and its product's), ISO-8601 | no (core) |
 
 **Availability is stock-driven, never hardcoded:** when `silvershop/stock` is installed the enum follows
 `hasAvailableStock()`; otherwise it follows `canPurchase()`. A buyable that cannot be purchased is always

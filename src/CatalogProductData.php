@@ -26,8 +26,13 @@ namespace SilverShop\CatalogData;
 final class CatalogProductData
 {
     /**
+     * The trailing arguments ({@see self::quantity()} onward) are later, purely additive extensions carrying the
+     * fields a marketplace-oriented feed (e.g. Channable) wants beyond the text/marketing set. They default so every
+     * existing positional caller keeps working unchanged.
+     *
      * @param array<int, string>    $additionalImageLinks absolute URLs, primary image excluded, in order
      * @param array<string, string> $attributes           variant attribute label => value (e.g. ['Color' => 'Red'])
+     * @param array<int, string>    $secondaryCategories  additional category paths beyond the primary productType
      */
     public function __construct(
         private readonly string $feedId,
@@ -48,6 +53,13 @@ final class CatalogProductData
         private readonly Condition $condition,
         private readonly ?string $productType,
         private readonly array $attributes,
+        private readonly ?int $quantity = null,
+        private readonly ?float $weight = null,
+        private readonly ?float $height = null,
+        private readonly ?float $width = null,
+        private readonly ?float $depth = null,
+        private readonly array $secondaryCategories = [],
+        private readonly ?string $lastModified = null,
     ) {
     }
 
@@ -206,6 +218,68 @@ final class CatalogProductData
     public function attributes(): array
     {
         return $this->attributes;
+    }
+
+    /**
+     * Finite on-hand stock quantity (from {@code silvershop/stock}), or {@code null} when stock is untracked,
+     * unlimited, or that module is absent — in which case {@see self::availability()} is the only stock signal.
+     */
+    public function quantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * Shipping weight in the shop's configured unit, or {@code null} when unset. For marketplace size/rate rules.
+     */
+    public function weight(): ?float
+    {
+        return $this->weight;
+    }
+
+    /**
+     * Shipping height in the shop's configured unit, or {@code null} when unset.
+     */
+    public function height(): ?float
+    {
+        return $this->height;
+    }
+
+    /**
+     * Shipping width in the shop's configured unit, or {@code null} when unset.
+     */
+    public function width(): ?float
+    {
+        return $this->width;
+    }
+
+    /**
+     * Shipping depth in the shop's configured unit, or {@code null} when unset.
+     */
+    public function depth(): ?float
+    {
+        return $this->depth;
+    }
+
+    /**
+     * Additional category paths the item is listed in, beyond the single primary {@see self::productType()} path
+     * (e.g. {@code ['Shop > Sale', 'Shop > New in']}); empty when there are none. Each is a full {@code "A > B"}
+     * path, the primary path excluded.
+     *
+     * @return array<int, string>
+     */
+    public function secondaryCategories(): array
+    {
+        return $this->secondaryCategories;
+    }
+
+    /**
+     * ISO-8601 timestamp of the item's last change (its {@code LastEdited}, for a variation the later of its own
+     * and its product's), or {@code null} when unavailable. Useful for a channel's delta/refresh logic.
+     */
+    public function lastModified(): ?string
+    {
+        return $this->lastModified;
     }
 
     private function formatMoney(?float $value): ?string

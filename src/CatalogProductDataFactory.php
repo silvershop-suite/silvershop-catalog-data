@@ -126,6 +126,13 @@ class CatalogProductDataFactory
             $this->conditionFor($product),
             $this->productTypeFor($product),
             [],
+            $this->quantityFor($product),
+            $this->physicalFor($product, 'Weight'),
+            $this->physicalFor($product, 'Height'),
+            $this->physicalFor($product, 'Width'),
+            $this->physicalFor($product, 'Depth'),
+            $this->secondaryCategoriesFor($product),
+            $this->lastModifiedFor($product),
         );
     }
 
@@ -163,6 +170,13 @@ class CatalogProductDataFactory
             $hasParent ? $this->conditionFor($parent) : Condition::fromValue($this->configuredDefaultCondition()),
             $hasParent ? $this->productTypeFor($parent) : null,
             $this->attributesFor($variation),
+            $this->quantityFor($variation),
+            $this->physicalFor($variation, 'Weight'),
+            $this->physicalFor($variation, 'Height'),
+            $this->physicalFor($variation, 'Width'),
+            $this->physicalFor($variation, 'Depth'),
+            $hasParent ? $this->secondaryCategoriesFor($parent) : [],
+            $this->lastModifiedFor($variation),
         );
     }
 
@@ -293,24 +307,44 @@ class CatalogProductDataFactory
      */
     private function productTypeFor(Product $product): ?string
     {
-        $category = null;
+        $category = $this->primaryCategoryFor($product);
+
+        return $category instanceof ProductCategory ? $this->categoryPath($category) : null;
+    }
+
+    /**
+     * The product's primary category: its parent in the tree, else its first assigned category. Null when the
+     * product is not categorised.
+     */
+    private function primaryCategoryFor(Product $product): ?ProductCategory
+    {
         $parent = $product->Parent();
         if ($parent instanceof ProductCategory && $parent->exists()) {
-            $category = $parent;
-        } elseif ($product->getCategoryIDs() !== []) {
-            // Guarded: getCategories() does byIDs($ids), and in SS6 byIDs([]) throws "filter against an empty set".
+            return $parent;
+        }
+
+        // Guarded: getCategories() does byIDs($ids), and in SS6 byIDs([]) throws "filter against an empty set".
+        if ($product->getCategoryIDs() !== []) {
             $first = $product->getCategories()->first();
             if ($first instanceof ProductCategory) {
-                $category = $first;
+                return $first;
             }
         }
 
-        if (!$category instanceof ProductCategory || !$category->hasMethod('NestedTitle')) {
+        return null;
+    }
+
+    /**
+     * A category's full path (e.g. {@code "Clothing > Jackets"}). NestedTitle walks the category's parent chain;
+     * empty segments (e.g. the site root) are filtered so the path never carries leading separators. Null when the
+     * category has no NestedTitle or the path is empty.
+     */
+    private function categoryPath(ProductCategory $category): ?string
+    {
+        if (!$category->hasMethod('NestedTitle')) {
             return null;
         }
 
-        // NestedTitle walks the category's parent chain; filter out any empty segments (e.g. the site root) so the
-        // path never carries leading separators.
         $raw = (string) $category->NestedTitle(10, self::CATEGORY_SEPARATOR, 'MenuTitle');
         $parts = array_values(array_filter(
             array_map('trim', explode(self::CATEGORY_SEPARATOR, $raw)),
@@ -318,6 +352,99 @@ class CatalogProductDataFactory
         ));
 
         return $parts === [] ? null : implode(self::CATEGORY_SEPARATOR, $parts);
+    }
+
+    /**
+     * Additional category paths a product is listed in beyond its primary {@see self::productTypeFor()} path — its
+     * explicit {@code ProductCategories} many-many placements (the ancestors of the primary location are not
+     * repeated). Each is a full {@code "A > B"} path; the primary path and duplicates are excluded. Empty when the
+     * product has no secondary categories.
+     *
+     * @return array<int, string>
+     */
+    private function secondaryCategoriesFor(Product $product): array
+    {
+        if (!$product->hasMethod('ProductCategories')) {
+            return [];
+        }
+
+        $primary = $this->productTypeFor($product);
+        $paths = [];
+        foreach ($product->ProductCategories() as $category) {
+            if (!$category instanceof ProductCategory || !$category->exists()) {
+                continue;
+            }
+            $path = $this->categoryPath($category);
+            if ($path !== null && $path !== $primary && !in_array($path, $paths, true)) {
+                $paths[] = $path;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Finite on-hand stock level for a buyable from {@code silvershop/stock} ({@code getStockLevel()}), or
+     * {@code null} when that module is absent, the record's stock is untracked (no warehouse), or stock is
+     * unlimited (a negative sentinel) — in which case {@see self::availabilityFor()} is the only stock signal.
+     */
+    private function quantityFor(Product|Variation $record): ?int
+    {
+        if (!$record->hasMethod('getStockLevel')) {
+            return null;
+        }
+
+        $level = $this->callMethod($record, 'getStockLevel');
+        if ($level === null || $level === '') {
+            return null;
+        }
+
+        $quantity = (int) $level;
+
+        return $quantity >= 0 ? $quantity : null;
+    }
+
+    /**
+     * A positive physical measurement — one of {@code Weight} / {@code Height} / {@code Width} / {@code Depth}
+     * (core shipping fields on both Product and Variation) — or {@code null} when unset (0). A variation with an
+     * unset measurement inherits its product's.
+     */
+    private function physicalFor(Product|Variation $record, string $field): ?float
+    {
+        $value = (float) $record->getField($field);
+        if ($value <= 0.0 && $record instanceof Variation) {
+            $parent = $record->Product();
+            if ($parent instanceof Product && $parent->exists()) {
+                $value = (float) $parent->getField($field);
+            }
+        }
+
+        return $value > 0.0 ? $value : null;
+    }
+
+    /**
+     * ISO-8601 {@code last_modified} timestamp — the record's {@code LastEdited}, and for a variation the later of
+     * its own and its product's {@code LastEdited}. Null when unavailable.
+     */
+    private function lastModifiedFor(Product|Variation $record): ?string
+    {
+        $timestamps = [];
+        $own = strtotime((string) $record->getField('LastEdited'));
+        if ($own !== false && $own > 0) {
+            $timestamps[] = $own;
+        }
+
+        if ($record instanceof Variation) {
+            $parent = $record->Product();
+            if ($parent instanceof Product && $parent->exists()) {
+                $parentTs = strtotime((string) $parent->getField('LastEdited'));
+                if ($parentTs !== false && $parentTs > 0) {
+                    $timestamps[] = $parentTs;
+                }
+            }
+        }
+
+        return $timestamps === [] ? null : date('c', max($timestamps));
     }
 
     /**
