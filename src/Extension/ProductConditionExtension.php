@@ -14,7 +14,7 @@ use SilverStripe\Forms\FieldList;
  *
  * Condition is a catalogue/marketing attribute shared by the feed ({@code g:condition}), SEO JSON-LD
  * ({@code itemCondition}) and tracking, so it lives here alongside the mapper rather than in the pure
- * barcode-focused {@code silvershop/product-identity}. {@link \SilverShop\CatalogData\CatalogProductDataFactory}
+ * barcode-focused {@code silvershop-suite/product-identity}. {@link \SilverShop\CatalogData\CatalogProductDataFactory}
  * reads it (variations inherit their product's condition); the stored default is {@code new}.
  *
  * @extends Extension<\SilverShop\Page\Product>

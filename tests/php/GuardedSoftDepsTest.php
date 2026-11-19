@@ -11,9 +11,9 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 
 /**
- * The guarded soft-dependency reads — GTIN/MPN (silvershop/product-identity), brand (silvershop/brands) — exercised
- * BOTH ways: present (value flows into the VO) and absent (gracefully omitted as null). The "present" cases skip
- * when the optional module is not installed, so the suite stays green on a bare install and fully covered in the
+ * The guarded soft-dependency reads — GTIN/MPN (silvershop-suite/product-identity), brand (silvershop-suite/brands) —
+ * exercised BOTH ways: present (value flows into the VO) and absent (gracefully omitted as null). The "present" cases
+ * skip when the optional module is not installed, so the suite stays green on a bare install and fully covered in the
  * clean-room where the path-repo modules are present.
  */
 class GuardedSoftDepsTest extends SapphireTest
@@ -54,7 +54,7 @@ class GuardedSoftDepsTest extends SapphireTest
     public function testGtinFlowsFromProductIdentityWhenSet(): void
     {
         if (!Product::singleton()->hasMethod('getResolvedGtin')) {
-            $this->markTestSkipped('silvershop/product-identity is not installed.');
+            $this->markTestSkipped('silvershop-suite/product-identity is not installed.');
         }
 
         $product = $this->newProduct();
@@ -70,7 +70,7 @@ class GuardedSoftDepsTest extends SapphireTest
     public function testVariationGtinFallsBackToProductThroughResolvedAccessor(): void
     {
         if (!Variation::singleton()->hasMethod('getResolvedGtin')) {
-            $this->markTestSkipped('silvershop/product-identity is not installed.');
+            $this->markTestSkipped('silvershop-suite/product-identity is not installed.');
         }
 
         $product = $this->newProduct();
@@ -93,7 +93,7 @@ class GuardedSoftDepsTest extends SapphireTest
     {
         $brandClass = 'SilverShop\\Brands\\Brand';
         if (!class_exists($brandClass) || !Product::singleton()->hasMethod('Brand')) {
-            $this->markTestSkipped('silvershop/brands is not installed.');
+            $this->markTestSkipped('silvershop-suite/brands is not installed.');
         }
 
         $brand = $brandClass::create(['Title' => 'Acme']);
@@ -115,7 +115,7 @@ class GuardedSoftDepsTest extends SapphireTest
     public function testIdentifierExistsNullWhenGtinPresent(): void
     {
         if (!Product::singleton()->hasMethod('getResolvedGtin')) {
-            $this->markTestSkipped('silvershop/product-identity is not installed.');
+            $this->markTestSkipped('silvershop-suite/product-identity is not installed.');
         }
 
         $product = $this->newProduct();
@@ -130,7 +130,7 @@ class GuardedSoftDepsTest extends SapphireTest
     {
         $brandClass = 'SilverShop\\Brands\\Brand';
         if (!class_exists($brandClass) || !Product::singleton()->hasMethod('Brand')) {
-            $this->markTestSkipped('silvershop/brands is not installed.');
+            $this->markTestSkipped('silvershop-suite/brands is not installed.');
         }
 
         $brand = $brandClass::create(['Title' => 'Acme']);

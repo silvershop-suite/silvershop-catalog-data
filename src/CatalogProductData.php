@@ -11,9 +11,9 @@ namespace SilverShop\CatalogData;
  * This is the suite's single normalised product-data representation. {@link CatalogProductDataFactory} builds it
  * from a buyable; the consumers only *format* it:
  *
- *  - {@code silvershop/product-feed-google} maps it to {@code g:} RSS attributes;
- *  - {@code silvershop/seo} formats it as schema.org JSON-LD;
- *  - {@code silvershop/conversion-tracking} reads {@see self::feedId()} for {@code content_ids} and
+ *  - {@code silvershop-suite/product-feed-google} maps it to {@code g:} RSS attributes;
+ *  - {@code silvershop-suite/seo} formats it as schema.org JSON-LD;
+ *  - {@code silvershop-suite/conversion-tracking} reads {@see self::feedId()} for {@code content_ids} and
  *    {@see self::price()} / {@see self::currency()} for the event value.
  *
  * Because every consumer reads {@see self::feedId()}, the feed's {@code g:id} and the ad platforms'
@@ -170,7 +170,7 @@ final class CatalogProductData
     }
 
     /**
-     * Resolved GTIN (digits-only) from {@code silvershop/product-identity}, or {@code null} when that module is
+     * Resolved GTIN (digits-only) from {@code silvershop-suite/product-identity}, or {@code null} when that module is
      * absent or the item has none.
      */
     public function gtin(): ?string
@@ -179,7 +179,7 @@ final class CatalogProductData
     }
 
     /**
-     * Resolved MPN from {@code silvershop/product-identity}, or {@code null} when absent.
+     * Resolved MPN from {@code silvershop-suite/product-identity}, or {@code null} when absent.
      */
     public function mpn(): ?string
     {

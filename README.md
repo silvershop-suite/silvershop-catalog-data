@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/silvershop-suite/silvershop-catalog-data/actions/workflows/ci.yml/badge.svg)](https://github.com/silvershop-suite/silvershop-catalog-data/actions/workflows/ci.yml)
 
-The **shared, normalised product-data mapper** for [SilverShop](https://github.com/silvershop/silvershop) on
+The **shared, normalised product-data mapper** for [SilverShop](https://github.com/silvershop/silvershop-core) on
 Silverstripe CMS 6. It turns a core `Product` or `Variation` into a single, format-agnostic value object —
 `CatalogProductData` — carrying the channel-ready fields every outbound integration needs.
 

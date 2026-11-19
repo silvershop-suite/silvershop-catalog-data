@@ -22,10 +22,10 @@ use SilverStripe\ORM\DataObject;
  * on identity, price and availability by construction.
  *
  * The guarded extraction helpers ({@see self::callMethod()}, {@see self::imageUrls()}, {@see self::prune()}) are
- * lifted from {@code silvershop/seo}'s structured-data providers and live here as the canonical implementation: soft
- * dependencies ({@code silvershop/product-identity} for GTIN/MPN, {@code silvershop/brands} for the brand,
- * {@code silvershop/stock} for stock-driven availability, {@code silvershop/product-gallery} for extra images) are
- * read defensively so the mapper works whether or not they are installed.
+ * lifted from {@code silvershop-suite/seo}'s structured-data providers and live here as the canonical implementation:
+ * soft dependencies ({@code silvershop-suite/product-identity} for GTIN/MPN, {@code silvershop-suite/brands} for the
+ * brand, {@code silvershop/stock} for stock-driven availability, {@code silvershop-suite/product-gallery} for extra
+ * images) are read defensively so the mapper works whether or not they are installed.
  */
 class CatalogProductDataFactory
 {
@@ -483,8 +483,8 @@ class CatalogProductDataFactory
     }
 
     /**
-     * Resolved GTIN from {@code silvershop/product-identity} (which owns the variant→product fallback), or null when
-     * that module is absent or no code is set.
+     * Resolved GTIN from {@code silvershop-suite/product-identity} (which owns the variant→product fallback), or null
+     * when that module is absent or no code is set.
      */
     private function resolvedGtin(DataObject $record): ?string
     {
@@ -605,7 +605,7 @@ class CatalogProductDataFactory
     }
 
     /**
-     * Absolute URLs of a record's images, preferring the full gallery ({@code silvershop/product-gallery}'s
+     * Absolute URLs of a record's images, preferring the full gallery ({@code silvershop-suite/product-gallery}'s
      * getAllImages) and falling back to the single primary Image(). Non-existent images are skipped and duplicates
      * removed.
      *
